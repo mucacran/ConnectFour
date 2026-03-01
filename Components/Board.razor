@@ -1,0 +1,211 @@
+@page "/connectfour"
+@using BlazorApp1
+@using System.Drawing
+@inject GameState State
+
+<div
+    style="--board-bg: @ColorTranslator.ToHtml(BoardColor); --player1: @ColorTranslator.ToHtml(Player1Color); --player2: @ColorTranslator.ToHtml(Player2Color);">
+
+
+
+    <article class="mb-3">
+        <p class="visually-hidden" aria-live="polite">@LiveStatusMessage</p>
+
+        @if (winnerMessage != string.Empty)
+        {
+            <p class="fw-bold" role="status">@winnerMessage</p>
+            <button type="button" class="btn btn-primary btn-sm" @onclick="ResetGame">Reset the game</button>
+        }
+
+        @if (errorMessage != string.Empty)
+        {
+            <p class="text-danger fw-semibold mb-1" role="alert">@errorMessage</p>
+        }
+
+        @if (CurrentTurn != string.Empty)
+        {
+            <p class="text-info mb-0">@CurrentTurn</p>
+        }
+    </article>
+
+    <div class="row g-3 mb-3">
+        <div class="col-12 col-md-6">
+            <div class="player-card">
+                <h4>Player 1: @State.Player1Name</h4>
+                <p class="player-dot" style="color: var(--player1);">●</p>
+                <p>Consecutive wins: @State.Player1ConsecutiveWins</p>
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="player-card">
+                <h4>Player 2: @State.Player2Name</h4>
+                <p class="player-dot" style="color: var(--player2);">●</p>
+                <p>Consecutive wins: @State.Player2ConsecutiveWins</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 align-items-start">
+        <div class="col-12 col-lg-8">
+            <div class="game-area mx-auto">
+                <nav class="drop-nav" aria-label="Choose a column to drop your piece">
+                    @for (byte i = 0; i < 7; i++)
+                    {
+                        var col = i;
+                        <button type="button"                            class="drop-button"                            title="Drop piece in column @(col + 1)"
+                                aria-label="@GetDropButtonLabel(col)"                            @onclick="() => PlayPiece(col)">↓</button>
+                    }
+                </nav>
+
+                <div class="board-wrapper">
+                    <div class="board" role="img" aria-label="Connect Four board with 7 columns and 6 rows">
+                        @for (var i = 0; i < 42; i++)
+                        {
+                            <span class="board-cell" aria-hidden="true">
+                                <span></span>
+                            </span>
+                        }
+                    </div>
+                    @for (var i = 0; i < 42; i++)
+                    {
+                        <span class="@pieces[i]"></span>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-4">
+            <section class="history-panel" aria-labelledby="history-title">
+                <h4 id="history-title">Move History</h4>
+                @if (State.Moves.Count == 0)
+                {
+                    <p>No moves yet.</p>
+                }
+                else
+                {
+                    <ol>
+                        @foreach (var move in State.Moves)
+                        {
+                            <li>@BuildMoveDescription(move)</li>
+                        }
+                    </ol>
+                }
+            </section>
+        </div>
+    </div>
+
+
+</div>
+
+
+@code {
+    private string[] pieces = new string[42];
+    private string winnerMessage = string.Empty;
+    private string errorMessage = string.Empty;
+
+    private string CurrentTurn
+    {
+        get
+        {
+            if (winnerMessage != string.Empty)
+            {
+                return string.Empty;
+            }
+
+            if (State.PlayerTurn == 1)
+            {
+                return $"{State.Player1Name}'s Turn";
+            }
+
+            return $"{State.Player2Name}'s Turn";
+        }
+    }
+
+    [Parameter]
+    public Color BoardColor { get; set; } = ColorTranslator.FromHtml("yellow");
+
+    [Parameter]
+    public Color Player1Color { get; set; } = ColorTranslator.FromHtml("red");
+
+    [Parameter]
+    public Color Player2Color { get; set; } = ColorTranslator.FromHtml("blue");
+
+    protected override void OnInitialized()
+    {
+        State.ResetBoard();
+    }
+
+    private string LiveStatusMessage
+    {
+        get
+        {
+            if (errorMessage != string.Empty)
+            {
+                return errorMessage;
+            }
+
+            if (winnerMessage != string.Empty)
+            {
+                return winnerMessage;
+            }
+
+            return CurrentTurn;
+        }
+    }
+
+    private void PlayPiece(byte col)
+    {
+        errorMessage = string.Empty;
+        try
+        {
+            var player = State.PlayerTurn;
+            var turn = State.CurrentTurn;
+            var landingRow = State.PlayPiece(col);
+            pieces[turn] = $"player{player} col{col} drop{landingRow}";
+        }
+        catch (ArgumentException ex)
+        {
+            errorMessage = ex.Message;
+        }
+
+        var gameResult = State.CheckForWin();
+        State.RecordGameResult(gameResult);
+
+        winnerMessage = gameResult switch
+        {
+            GameState.WinState.Player1_Wins => $"{State.Player1Name} Wins!",
+            GameState.WinState.Player2_Wins => $"{State.Player2Name} Wins!",
+            GameState.WinState.Tie => "It's a tie!",
+            _ => ""
+        };
+    }
+
+    void ResetGame()
+    {
+        State.ResetBoard();
+        winnerMessage = string.Empty;
+        errorMessage = string.Empty;
+        pieces = new string[42];
+    }
+
+    private string BuildMoveDescription(GameState.GameMove move)
+    {
+        var playerName = GetPlayerName(move.Player);
+        return $"Turn {move.Turn}: {playerName} - Column {move.Column}, Row {move.Row}";
+    }
+
+    private string GetPlayerName(int player)
+    {
+        if (player == 1)
+        {
+            return State.Player1Name;
+        }
+
+        return State.Player2Name;
+    }
+
+    private string GetDropButtonLabel(byte column)
+    {
+        return $"Drop piece in column {column + 1}";
+    }
+}

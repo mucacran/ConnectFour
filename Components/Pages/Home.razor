@@ -1,0 +1,74 @@
+﻿@page "/"
+@rendermode InteractiveServer
+@using BlazorApp1
+@using System.Drawing
+@inject GameState GameState
+
+<PageTitle>Home</PageTitle>
+
+<!-- Connect Four Game Board -->
+<div class="mt-5">
+  <h2 class="text-center mb-4">¡Juega Connect Four!</h2>
+  <!-- imputs de nombres de jugadores -->
+  <div class="form-group" style="width: 300px; margin: 0 auto;">
+    <label for="player1Name">Nombre del Jugador 1:</label>
+    <input type="text" id="player1Name" class="form-control" @bind="player1Name" />
+  </div>
+  <div class="form-group" style="width: 300px; margin: 0 auto;">
+    <label for="player2Name">Nombre del Jugador 2:</label>
+    <input type="text" id="player2Name" class="form-control" @bind="player2Name" />
+  </div>
+  <div class="form-group text-center mt-3">
+    <button class="btn btn-success" @onclick="UpdatePlayerNames">Update name</button>
+  </div>
+
+  <div class="form-group" style="width: 300px; margin: 0 auto;">
+    <label for="player1Color">Color del Jugador 1:</label>
+    <input type="color" id="player1Color" class="form-control form-control-color" @bind="player1ColorHex" />
+  </div>
+
+  <div class="form-group" style="width: 300px; margin: 0 auto;">
+    <label for="player2Color">Color del Jugador 2:</label>
+    <input type="color" id="player2Color" class="form-control form-control-color" @bind="player2ColorHex" />
+  </div>
+
+  <!-- fin imputs de nombres de jugadores -->
+  <div class="text-center">
+    <Board
+     BoardColor="System.Drawing.Color.Black"
+     Player1Color="@Player1SelectedColor"
+     Player2Color="@Player2SelectedColor"
+     />
+  </div>
+</div>
+
+<!--<Counter IncrementAmount="10" />-->
+
+@code {
+  private string player1Name = "Jugador 1";
+  private string player2Name = "Jugador 2";
+  private string player1ColorHex = "#FF0000";
+  private string player2ColorHex = "#800080";
+
+  private Color Player1SelectedColor
+  {
+    get
+    {
+      return ColorTranslator.FromHtml(player1ColorHex);
+    }
+  }
+
+  private Color Player2SelectedColor
+  {
+    get
+    {
+      return ColorTranslator.FromHtml(player2ColorHex);
+    }
+  }
+
+  private void UpdatePlayerNames()
+  {
+    GameState.Player1Name = player1Name;
+    GameState.Player2Name = player2Name;
+  }
+}

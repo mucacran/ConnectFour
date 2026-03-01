@@ -1,0 +1,170 @@
+.player-card {
+    text-align: center;
+}
+
+.player-dot {
+    font-size: 2rem;
+    line-height: 1;
+}
+
+.game-area {
+    width: 100%;
+    max-width: 30em;
+}
+
+.drop-nav {
+    width: 100%;
+    display: inline-flex;
+    flex-direction: row;
+    margin-bottom: 0.75rem;
+}
+
+.drop-button {
+    width: 3.7em;
+    height: 2.25em;
+    text-align: center;
+    cursor: pointer;
+    font-size: 1.1em;
+    border: 1px solid var(--bs-border-color);
+    background-color: var(--bs-light);
+    color: var(--bs-dark);
+}
+
+.drop-button:focus-visible {
+    outline: 3px solid var(--bs-primary);
+    outline-offset: 2px;
+}
+
+.board-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.board {
+    width: 100%;
+    max-width: 30em;
+    height: 24em;
+    overflow: hidden;
+    display: inline-flex;
+    flex-wrap: wrap;
+    row-gap: 0;
+    pointer-events: none;
+    border-left: 10px solid var(--board-bg);
+    z-index: -5;
+}
+
+.history-panel {
+    border: 1px solid var(--bs-border-color);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    background: var(--bs-body-bg);
+}
+
+.history-panel ol {
+    margin-bottom: 0;
+    padding-left: 1.25rem;
+}
+
+.board-cell {
+    width: 4em;
+    height: 4em;
+    margin: 0;
+    padding: 4px;
+    overflow: hidden;
+    background-color: transparent;
+    position: relative;
+    pointer-events: none;
+    z-index: -2;
+}
+
+.board-cell span {
+    width: 3.5em;
+    height: 3.5em;
+    border-radius: 50%;
+    box-shadow: 0 0 0 3em var(--board-bg);
+    left: 0;
+    position: absolute;
+    display: block;
+    z-index: 5;
+    pointer-events: none;
+}
+
+.player1,
+.player2 {
+    width: 3.5em;
+    height: 3.5em;
+    border-radius: 50%;
+    left: calc(10px + 0.25em);
+    top: 0.25em;
+    position: absolute;
+    display: block;
+    z-index: -8;
+}
+
+.player1 {
+    background-color: var(--player1);
+    box-shadow: 0 0 0 4px var(--player1);
+    animation-timing-function: cubic-bezier(.5, .05, 1, .5);
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+}
+
+.player2 {
+    background-color: var(--player2);
+    box-shadow: 0 0 0 4px var(--player2);
+    animation-timing-function: cubic-bezier(.5, .05, 1, .5);
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+}
+
+.col0 { left: calc(10px + 0.25em + 0em); }
+.col1 { left: calc(10px + 0.25em + 4em); }
+.col2 { left: calc(10px + 0.25em + 8em); }
+.col3 { left: calc(10px + 0.25em + 12em); }
+.col4 { left: calc(10px + 0.25em + 16em); }
+.col5 { left: calc(10px + 0.25em + 20em); }
+.col6 { left: calc(10px + 0.25em + 24em); }
+
+.drop1 { animation-duration: 1s; animation-name: drop1; }
+.drop2 { animation-duration: 1.5s; animation-name: drop2; }
+.drop3 { animation-duration: 1.6s; animation-name: drop3; }
+.drop4 { animation-duration: 1.7s; animation-name: drop4; }
+.drop5 { animation-duration: 1.8s; animation-name: drop5; }
+.drop6 { animation-duration: 1.9s; animation-name: drop6; }
+
+@keyframes drop1 {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(0); }
+}
+
+@keyframes drop2 {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(4em); }
+}
+
+@keyframes drop3 {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(8em); }
+}
+
+@keyframes drop4 {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(12em); }
+}
+
+@keyframes drop5 {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(16em); }
+}
+
+@keyframes drop6 {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(20em); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .player1,
+    .player2 {
+        animation-duration: 0s;
+    }
+}
